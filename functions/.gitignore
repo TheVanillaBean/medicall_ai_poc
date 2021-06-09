@@ -1,0 +1,39 @@
+# mac
+.DS_Store
+
+# service account file
+service-account.json
+
+# jest config
+functions/src/test.config.ts
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+firebase-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+
+# Firebase cache
+.firebase/
+
+# Compiled JavaScript files
+lib/**/*.js
+lib/**/*.js.map
+
+# TypeScript v1 declaration files
+typings/
+
+# Node.js dependency directory
+node_modules/
+
+# Optional eslint cache
+.eslintcache
