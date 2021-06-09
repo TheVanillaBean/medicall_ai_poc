@@ -9,34 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateImageFiles = exports.downloadFile = void 0;
 const express = require('express');
 const router = express.Router();
-const tmp_promise_1 = require("tmp-promise");
-const config_1 = require("../config");
-function downloadFile(fileName) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { path, cleanup } = yield tmp_promise_1.file({ postfix: '.jpg' });
-        yield config_1.storage.bucket().file(fileName).download({ destination: path });
-        return path;
-    });
-}
-exports.downloadFile = downloadFile;
-exports.generateImageFiles = () => __awaiter(void 0, void 0, void 0, function* () {
-    const options = {
-        prefix: `test-images/`,
-    };
-    // Lists files in the bucket
-    const [files] = yield config_1.storage.bucket().getFiles(options);
-    let filePaths = [];
-    for (const fileObj of files) {
-        const path = yield downloadFile(fileObj.name).catch(console.error);
-        filePaths.push(path);
-    }
-    return filePaths;
-});
+const helpers_1 = require("../helpers");
 router.get('/predict', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const imagePaths = yield exports.generateImageFiles();
+    const imagePaths = yield helpers_1.generateImageFiles();
     console.log(imagePaths);
     res.send(`Image 1: ${imagePaths[0]}`);
 }));
