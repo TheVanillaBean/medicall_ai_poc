@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -7,11 +8,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const querystring = require('querystring');
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateImageFiles = exports.downloadFile = void 0;
 const express = require('express');
 const router = express.Router();
-router.get('/predict', (req, res) => __awaiter(this, void 0, void 0, function* () {
-    // Write some magic Steven!
+const tmp_promise_1 = require("tmp-promise");
+const config_1 = require("../config");
+function downloadFile(fileName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { path, cleanup } = yield tmp_promise_1.file({ postfix: '.jpg' });
+        yield config_1.storage.bucket().file(fileName).download({ destination: path });
+        return path;
+    });
+}
+exports.downloadFile = downloadFile;
+exports.generateImageFiles = () => __awaiter(void 0, void 0, void 0, function* () {
+    const options = {
+        prefix: `test-images/`,
+    };
+    // Lists files in the bucket
+    const [files] = yield config_1.storage.bucket().getFiles(options);
+    let filePaths = [];
+    for (const fileObj of files) {
+        const path = yield downloadFile(fileObj.name).catch(console.error);
+        filePaths.push(path);
+    }
+    return filePaths;
+});
+router.get('/predict', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const imagePaths = yield exports.generateImageFiles();
+    console.log(imagePaths);
+    res.send(`Image 1: ${imagePaths[0]}`);
 }));
 module.exports = router;
 //# sourceMappingURL=ai.js.map
